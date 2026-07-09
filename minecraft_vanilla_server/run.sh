@@ -49,19 +49,12 @@ install_java() {
     fi
 
     log_info "Java 25 nicht gefunden – installiere Temurin JRE"
-    local arch adoptium_arch
-    arch="$(uname -m)"
-    case "$arch" in
-        x86_64|amd64)  adoptium_arch="x64" ;;
-        aarch64|arm64) adoptium_arch="aarch64" ;;
-        *)             log_error "Nicht unterstützte Architektur: ${arch}"; exit 1 ;;
-    esac
 
     mkdir -p "${JRE_DIR}"
     TMP="/tmp/jre25.tar.gz"
     
-    # Brackets explicitly added around ${adoptium_arch} to fix network string interpolation
-    URL="https://adoptium.net{adoptium_arch}/jre/hotspot/normal/eclipse?project=jdk"
+    # URL completely hardcoded to skip any terminal script processing errors
+    URL="https://api.adoptium.net/v3/binary/latest/25/ga/linux/x64/jre/hotspot/normal/eclipse?project=jdk"
     
     curl -fL --retry 3 --retry-delay 2 "${URL}" -o "${TMP}"
     rm -rf "${JRE_DIR:?}/"*
